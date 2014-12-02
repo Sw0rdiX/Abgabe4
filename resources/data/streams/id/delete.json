@@ -1,0 +1,5 @@
+{
+  "type": "ok",
+  "statusCode": 200,
+  "msg": "DELETE a stream by stream_id"
+}

@@ -1,0 +1,5 @@
+{
+"type": "ok",
+"statusCode": 200,
+"msg": "GET a stream by stream_id"
+}
