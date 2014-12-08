@@ -4,20 +4,21 @@
 
 ## Overview
 
-NodeJS REST API Server with express-node.
-Documentation with swagger-node & swagger-ui.
-Tests with [jasmine]()
+NodeJS REST API Server with [express](https://www.npmjs.org/package/express).
 
----------------------------------------------------
+Documentation with [swagger-node](https://www.npmjs.org/package/swagger-node-express) & [swagger-ui](https://www.npmjs.org/package/swagger-ui).
+
+Tests with [frisby](https://www.npmjs.org/package/frisby) & [jasmine-node](https://www.npmjs.org/package/jasmine-node).
+
 ## Requirements
-* NodeJS (>= 0.10.3)
 
----------------------------------------------------
+    NodeJS (>= 0.10.3)
+
 ## Setup
 
 This project builds on following setup (please read requirements and getting started):
 
-- We use [Git](#).
+- I use [GitHub](https://github.com/Sw0rdiX/Abgabe4)(private).
 - The folder __node_modules__ won't be comitted into GIT. Use ```.gitignore``` to ignore folders or files.
 - Git-commit-messages in english please.
 
@@ -27,11 +28,14 @@ This project builds on following setup (please read requirements and getting sta
     npm start   // start server
 
 ## Run Test
+
     npm start   // start server
     npm jasmine-node . // start test
-or
-
     npm jasmine-node . --verbose // start test with output
+
+## API-Docs
+
+visit [localhost:8002/docs](http://localhost:8002/docs) (default).
 
 ## Licence (MIT)
 
