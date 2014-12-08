@@ -97,7 +97,7 @@ router.use(function (req, res, next) {
 router.get('/', function (req, res) {
     //res.sendFile(packageJSON);
     res.json(packageJSON);
-    console.log('sendFile -> ', packageJSON);
+    console.log('sendFile -> ', "packageJSON");
 });
 
 // route -> /streams
@@ -226,7 +226,7 @@ var corsOptions = {
             callback(null, false);
         } else {
             // change wordnik.com to your allowed domain.
-            var match = origin.match("^(.*)?.wordnik.com(\:[0-9]+)?");
+            var match = origin.match("^(.*)?.(\:[0-9]+)?");
             var allowed = (match !== null && match.length > 0);
             callback(null, allowed);
         }
@@ -276,8 +276,12 @@ swagger.configure("http://localhost:8002", "0.1");
 // -    -   -   -   -   -   -   -   -   -
 port = 8002;
 var server = app.listen(port, function () {
+    var extern = external_ip + ":" + server.address().port;
+    var intern = internal_ip + ":" + server.address().port + ":" + server.address().port;
     console.log("NodeJS Express Server started.");
-    console.log("External IP:PORT :", external_ip + ":" + server.address().port);
-    console.log("Internal IP:PORT :", internal_ip + ":" + server.address().port);
+    console.log("External IP:PORT :", extern);
+    console.log("Internal IP:PORT :", intern);
+    console.log("Documentation Extern(No Requests) :", extern + "/docs");
+    console.log("Documentation Intern:", intern + "/docs");
     console.log("Size of streamsData", streamsData.length);
 });
