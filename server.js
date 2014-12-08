@@ -16,9 +16,8 @@ var interfaces = os.networkInterfaces();
 var external_ip;
 var internal_ip;
 
-for (var interface in interfaces) {
-    var alias = 0;
-    interfaces[interface].forEach(function (details) {
+for (var elem in interfaces) {
+    interfaces[elem].forEach(function (details) {
         if (details.family == 'IPv4') {
             if (details.internal == false) {
                 external_ip = details.address;
@@ -29,6 +28,17 @@ for (var interface in interfaces) {
         }
     });
 }
+
+// WRITE JSON TO FILE METHOD
+var jsonToFile = function (inputJson, outputFilename) {
+    fs.writeFile(outputFilename, JSON.stringify(inputJson, null, 4), function (err) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("WRITE  JSON saved to " + outputFilename);
+        }
+    });
+};
 
 // REST API
 // -    -   -   -   -   -   -   -   -   -
@@ -59,16 +69,21 @@ app.set('json spaces', 4);
 
 // PACKAGE JSON
 var packageJSON = __dirname + '/package.json';
+packageJSON = JSON.parse(fs.readFileSync(packageJSON, 'utf8'));
 
 // ERROR JSON
 var error_404 = __dirname + '/resources/data/status/error_404.json';
+error_404 = JSON.parse(fs.readFileSync(error_404, 'utf8'));
+
 
 // ROUTES
 
-// route redirect
-routerRedirect.get('/', function (req, res) {
-    res.redirect('/api');
-});
+//// route redirect
+//routerRedirect.get('/', function (req, res) {
+//    console.log(req.method, ' at ', time(), ' from ', req.ip, ' to ', req.originalUrl);
+//    console.log('REDIRECT', ' at ', time(), ' from ', req.ip, ' to ', '-> api');
+//    res.redirect('/api');
+//});
 
 // middleware to use for all requests
 router.use(function (req, res, next) {
@@ -80,7 +95,8 @@ router.use(function (req, res, next) {
 
 // route for default information
 router.get('/', function (req, res) {
-    res.sendFile(packageJSON);
+    //res.sendFile(packageJSON);
+    res.json(packageJSON);
     console.log('sendFile -> ', packageJSON);
 });
 
@@ -89,25 +105,41 @@ router.route('/streams')
 
     // post
     .post(function (req, res) {
-        var oldStreamsDataLength = streamsData.length;
-        var newID = 0;
-        streamsData.forEach(function (streamData) {
-            if (streamData.id > newID) {
-                newID = streamData.id;
-            }
-        });
-        var newEntry = {
-            "id": newID + 1,
-            "name": req.body.name
-        };
-        streamsData.push(newEntry);
-        console.log("NEW ENTRY with ID", newEntry.id);
-        console.log("NEW SIZE of streamsData", streamsData.length, "before", oldStreamsDataLength);
-        res.json(newEntry);
+        if (!req.body.hasOwnProperty('name')) {
+            console.error("ERROR  Wrong Stream POST!");
+            res.status(404).json(error_404);
+        }
+        else {
+            var oldStreamsDataLength = streamsData.length;
+            var newID = 0;
+            streamsData.forEach(function (streamData) {
+                if (streamData.id > newID) {
+                    newID = streamData.id;
+                }
+            });
+            var newEntry = {
+                "id": newID + 1,
+                "name": req.body.name
+            };
+            streamsData.push(newEntry);
+            console.log("NEW ENTRY with ID", newEntry.id);
+            console.log("NEW SIZE of streamsData", streamsData.length, "before", oldStreamsDataLength);
+            res.json(newEntry);
+        }
     })
     // get
     .get(function (req, res) {
-        res.json(streamsData);
+        var error = true;
+        if (streamsData.length == 0) {
+            console.error("ERROR  No Stream found.");
+            res.status(404).sendFile(error_404);
+            error = false;
+        }
+        if (error) {
+            console.log('RESPONSE', ' at ', time(), ' from ', 'server', ' to ', req.ip);
+            res.json(streamsData);
+        }
+
     })
 ;
 
@@ -126,8 +158,8 @@ router.route('/streams/:stream_id')
             }
         });
         if (error) {
-            console.log("No Stream found.");
-            res.sendFile(error_404);
+            console.error("ERROR  No Stream found.");
+            res.status(404).json(error_404);
         }
     })
 
@@ -141,12 +173,13 @@ router.route('/streams/:stream_id')
                 console.log("CHANGE  Name from (", streamData.name, ") to (", req.body.name, ")");
                 error = false;
                 streamData.name = req.body.name;
+                console.log('RESPONSE', ' at ', time(), ' from ', 'server', ' to ', req.ip);
                 res.json(streamData);
             }
         });
         if (error) {
-            console.log("No Stream found.");
-            res.sendFile(error_404);
+            console.error("ERROR  No Stream found for this id " + searchID + ".");
+            res.status(404).json(error_404);
         }
 
     })
@@ -170,28 +203,78 @@ router.route('/streams/:stream_id')
             }
         });
         if (error) {
-            console.log("No Stream found.");
-            res.sendFile(error_404);
+            console.error("ERROR  No Stream found.");
+            res.status(404).json(error_404);
         }
 
     })
 ;
 // REGISTER ROUTES
 // register redirect for '/'
-app.use('/', routerRedirect);
+//app.use('/', routerRedirect);
 app.use('/api', router);
-
 
 // DOCUMENTATION
 // -    -   -   -   -   -   -   -   -   -
 
-//var swagger = require("swagger-node-express");
-//// Couple the application to the Swagger module.
-//swagger.setAppHandler(app);
+// SETTING CORS
+var cors = require("cors");
+var corsOptions = {
+    credentials: true,
+    origin: function (origin, callback) {
+        if (origin === undefined) {
+            callback(null, false);
+        } else {
+            // change wordnik.com to your allowed domain.
+            var match = origin.match("^(.*)?.wordnik.com(\:[0-9]+)?");
+            var allowed = (match !== null && match.length > 0);
+            callback(null, allowed);
+        }
+    }
+};
+app.use(cors(corsOptions));
 
+//app.use('/api-docs', express.static(__dirname + '/node_modules/swagger-node-express/swagger-ui'));
+
+var docs_handler = express.static(__dirname + '/node_modules/swagger-node-express/swagger-ui');
+app.get(/^\/docs(\/.*)?$/, function (req, res, next) {
+    if (req.url === '/docs') { // express static barfs on root url w/o trailing slash
+        res.writeHead(302, {'Location': req.url + '/'});
+        res.end();
+        return;
+    }
+    // take off leading /docs so that connect locates file correctly
+    req.url = req.url.substr('/docs'.length);
+    return docs_handler(req, res, next);
+});
+
+var swagger = require("swagger-node-express");
+
+// Couple the application to the Swagger module.
+swagger.setAppHandler(app);
+
+var models = require("./resources/swagger/models.js");
+var streamResources = require("./resources/swagger/resources.js");
+
+// CRUD = Create Read Update Delete
+swagger.addModels(models);
+swagger.addGet(streamResources.createStream);
+swagger.addPost(streamResources.readAllStreams);
+swagger.addGet(streamResources.readStreamById);
+swagger.addPut(streamResources.updateStreamById);
+swagger.addDelete(streamResources.deleteStreamById);
+
+
+swagger.configureSwaggerPaths("", "api-docs", "");
+swagger.setHeaders = function setHeaders(res) {
+    res.header("Access-Control-Allow-Headers", "Content-Type, X-API-KEY");
+    res.header("Content-Type", "application/json; charset=utf-8");
+};
+
+swagger.configure("http://localhost:8002", "0.1");
 // START SERVER
 // -    -   -   -   -   -   -   -   -   -
-
+port = 8002;
 var server = app.listen(port, function () {
     console.log("NodeJS Express Server started.");
     console.log("External IP:PORT :", external_ip + ":" + server.address().port);

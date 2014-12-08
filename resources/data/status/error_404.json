@@ -1,5 +1,5 @@
 {
-  type: "error",
-  statusCode : 404,
-  msg: "Requested resource not found"
+  "type": "error",
+  "statusCode": 404,
+  "msg": "Requested resource not found"
 }
