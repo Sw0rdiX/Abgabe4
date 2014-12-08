@@ -2,6 +2,8 @@
   "name": "Abgabe4",
   "version": "1.0.0",
   "description": "NodeJS API",
+  "author": "Nils Kienoel",
+  "license": "MIT",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,12 +12,13 @@
     "api",
     "nodejs"
   ],
-  "author": "Nils Kienoel",
-  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.9.2",
     "express": "^4.10.2",
     "swagger-node-express": "^2.1.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "frisby": "^0.8.3",
+    "jasmine-node": "^1.14.5"
+  }
 }

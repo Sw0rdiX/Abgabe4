@@ -3,7 +3,6 @@ var paramTypes = swagger.paramTypes;
 var url = require("url");
 var swe = swagger.errors;
 
-// the description will be picked up in the resource listing
 exports.createStream = {
     'spec': {
         "description": "Operations about streams",
@@ -11,13 +10,13 @@ exports.createStream = {
         "notes": "Returns a created Stream",
         "summary": "Create a new Stream",
         "method": "POST",
+        "parameters": [paramTypes.body("body", "Stream object that will be created (Id is not relevant)", "Stream")],
         "type": "Stream",
-        "errorResponses": [swagger.errors.notFound('streams')],
+        "errorResponses": [swagger.errors.invalid('id'),swagger.errors.invalid('name')],
         "nickname": "createStreams"
     }
 };
 
-// the description will be picked up in the resource listing
 exports.readAllStreams = {
     'spec': {
         "description": "Operations about streams",
@@ -26,14 +25,11 @@ exports.readAllStreams = {
         "summary": "Find all streams",
         "method": "GET",
         "type": "Stream",
-        "errorResponses": [swagger.errors.notFound('streams')],
+        "errorResponses": [swagger.errors.notFound('stream')],
         "nickname": "readAllStreams"
     }
 };
 
-
-
-// the description will be picked up in the resource listing
 exports.readStreamById = {
     'spec': {
         "description": "Operations about streams",
@@ -41,27 +37,13 @@ exports.readStreamById = {
         "notes": "Returns a stream based on ID",
         "summary": "Find stream by ID",
         "method": "GET",
-        "parameters": [swagger.pathParam("streamId", "ID of stream that needs to be fetched", "string")],
+        "parameters": [swagger.pathParam("streamId", "ID of stream that needs to be fetched", "integer")],
         "type": "Stream",
-        "errorResponses": [swagger.errors.invalid('id'), swagger.errors.notFound('streams')],
+        "errorResponses": [swagger.errors.invalid('id'), swagger.errors.notFound('stream')],
         "nickname": "readStreamById"
-    },
-    'action': function (req, res) {
-        if (!req.params.petId) {
-            throw swagger.errors.invalid('id');
-        }
-        var id = parseInt(req.params.petId);
-        var pet = petData.getPetById(id);
-
-        if (pet) {
-            res.send(JSON.stringify(pet));
-        } else {
-            throw swagger.errors.notFound('pet');
-        }
     }
 };
 
-// the description will be picked up in the resource listing
 exports.updateStreamById = {
     'spec': {
         "description": "Operations about streams",
@@ -69,27 +51,13 @@ exports.updateStreamById = {
         "notes": "Returns a stream based on ID",
         "summary": "Update stream by ID",
         "method": "PUT",
-        "parameters": [swagger.pathParam("streamId", "ID of stream that needs to be updated", "string"),paramTypes.body("body", "Pet object that needs to be updated in the store", "Pet")],
+        "parameters": [swagger.pathParam("streamId", "ID of stream that needs to be updated", "integer"),paramTypes.body("body", "Stream object that needs to be updated in the store", "Stream")],
         "type": "Stream",
-        "errorResponses": [swagger.errors.invalid('id'), swagger.errors.notFound('streams')],
+        "errorResponses": [swagger.errors.invalid('id'), swagger.errors.invalid('name')],
         "nickname": "updateStreamById"
-    },
-    'action': function (req, res) {
-        if (!req.params.petId) {
-            throw swagger.errors.invalid('id');
-        }
-        var id = parseInt(req.params.petId);
-        var pet = petData.getPetById(id);
-
-        if (pet) {
-            res.send(JSON.stringify(pet));
-        } else {
-            throw swagger.errors.notFound('pet');
-        }
     }
 };
 
-// the description will be picked up in the resource listing
 exports.deleteStreamById = {
     'spec': {
         "description": "Operations about streams",
@@ -97,22 +65,9 @@ exports.deleteStreamById = {
         "notes": "Returns a stream based on ID",
         "summary": "Delete stream by ID",
         "method": "DELETE",
-        "parameters": [swagger.pathParam("streamId", "ID of stream that needs to be delete", "string")],
+        "parameters": [swagger.pathParam("streamId", "ID of stream that needs to be delete", "integer")],
         "type": "Stream",
-        "errorResponses": [swagger.errors.invalid('id'), swagger.errors.notFound('streams')],
+        "errorResponses": [swagger.errors.invalid('id'), swagger.errors.notFound('stream')],
         "nickname": "deleteStreamById"
-    },
-    'action': function (req, res) {
-        if (!req.params.petId) {
-            throw swagger.errors.invalid('id');
-        }
-        var id = parseInt(req.params.petId);
-        var pet = petData.getPetById(id);
-
-        if (pet) {
-            res.send(JSON.stringify(pet));
-        } else {
-            throw swagger.errors.notFound('pet');
-        }
     }
 };

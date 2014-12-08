@@ -235,8 +235,9 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 //app.use('/api-docs', express.static(__dirname + '/node_modules/swagger-node-express/swagger-ui'));
-
+// make a static handler
 var docs_handler = express.static(__dirname + '/node_modules/swagger-node-express/swagger-ui');
+// use core for rewritten request url for allow-cross-domain
 app.get(/^\/docs(\/.*)?$/, function (req, res, next) {
     if (req.url === '/docs') { // express static barfs on root url w/o trailing slash
         res.writeHead(302, {'Location': req.url + '/'});
@@ -258,8 +259,8 @@ var streamResources = require("./resources/swagger/resources.js");
 
 // CRUD = Create Read Update Delete
 swagger.addModels(models);
-swagger.addGet(streamResources.createStream);
-swagger.addPost(streamResources.readAllStreams);
+swagger.addPost(streamResources.createStream);
+swagger.addGet(streamResources.readAllStreams);
 swagger.addGet(streamResources.readStreamById);
 swagger.addPut(streamResources.updateStreamById);
 swagger.addDelete(streamResources.deleteStreamById);
@@ -270,15 +271,17 @@ swagger.setHeaders = function setHeaders(res) {
     res.header("Access-Control-Allow-Headers", "Content-Type, X-API-KEY");
     res.header("Content-Type", "application/json; charset=utf-8");
 };
-
-swagger.configure("http://localhost:8002", "0.1");
+swagger.configure('', require('./package.json').version);
+port = 8002;
+//swagger.configure("http://" + external_ip +":"+ port, "0.1");
+swagger.configure("http://localhost:"+ port+"", "0.1");
 // START SERVER
 // -    -   -   -   -   -   -   -   -   -
-port = 8002;
+//port = 8002;
 var server = app.listen(port, function () {
     var extern = external_ip + ":" + server.address().port;
     var intern = internal_ip + ":" + server.address().port + ":" + server.address().port;
-    console.log("NodeJS Express Server started.");
+    console.log("NodeJS Express Server (with Swagger UI & J.. started.");
     console.log("External IP:PORT :", extern);
     console.log("Internal IP:PORT :", intern);
     console.log("Documentation Extern(No Requests) :", extern + "/docs");
