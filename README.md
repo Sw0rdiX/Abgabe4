@@ -27,7 +27,7 @@ This project builds on following setup (please read requirements and getting sta
 
 ## Run Test
 
-    npm start   // start server
+    npm start   // start server , server should start fresh to run the tests.
     npm jasmine-node . // start test
     npm jasmine-node . --verbose // start test with output
 
