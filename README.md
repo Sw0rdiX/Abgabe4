@@ -1,6 +1,4 @@
-## Übung 4 - Aufgabe 4 | version 1.0.0
-
----------------------------------------------------
+# Übung 4 - Aufgabe 4 | version 1.0.0
 
 ## Overview
 
