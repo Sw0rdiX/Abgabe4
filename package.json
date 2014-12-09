@@ -20,5 +20,9 @@
   "devDependencies": {
     "frisby": "^0.8.3",
     "jasmine-node": "^1.14.5"
+  },
+  "engines": {
+    "node": ">=0.10.3 < 0.12",
+    "npm": "~1.4.20"
   }
 }

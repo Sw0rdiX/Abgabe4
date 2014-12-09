@@ -281,7 +281,7 @@ swagger.configure("http://localhost:"+ port+"", "0.1");
 var server = app.listen(port, function () {
     var extern = external_ip + ":" + server.address().port;
     var intern = internal_ip + ":" + server.address().port + ":" + server.address().port;
-    console.log("NodeJS Express Server (with Swagger UI & J.. started.");
+    console.log("NodeJS Express Server (with Swagger UI & Jasmine started.");
     console.log("External IP:PORT :", extern);
     console.log("Internal IP:PORT :", intern);
     console.log("Documentation Extern(No Requests) :", extern + "/docs");
