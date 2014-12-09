@@ -1,3 +1,7 @@
+// resources.js
+// Multimedia Engeneering II - Übung 4
+// Nils Kienöl (797863)
+
 var swagger = require("swagger-node-express");
 var paramTypes = swagger.paramTypes;
 var url = require("url");
@@ -6,7 +10,7 @@ var swe = swagger.errors;
 exports.createStream = {
     'spec': {
         "description": "Operations about streams",
-        "path": "/api/streams",
+        "path": "/streams",
         "notes": "Returns a created Stream",
         "summary": "Create a new Stream",
         "method": "POST",
@@ -20,7 +24,7 @@ exports.createStream = {
 exports.readAllStreams = {
     'spec': {
         "description": "Operations about streams",
-        "path": "/api/streams",
+        "path": "/streams",
         "notes": "Returns all streams in the database",
         "summary": "Find all streams",
         "method": "GET",
@@ -33,7 +37,7 @@ exports.readAllStreams = {
 exports.readStreamById = {
     'spec': {
         "description": "Operations about streams",
-        "path": "/api/streams/{streamId}",
+        "path": "/streams/{streamId}",
         "notes": "Returns a stream based on ID",
         "summary": "Find stream by ID",
         "method": "GET",
@@ -47,7 +51,7 @@ exports.readStreamById = {
 exports.updateStreamById = {
     'spec': {
         "description": "Operations about streams",
-        "path": "/api/streams/{streamId}",
+        "path": "/streams/{streamId}",
         "notes": "Returns a stream based on ID",
         "summary": "Update stream by ID",
         "method": "PUT",
@@ -61,7 +65,7 @@ exports.updateStreamById = {
 exports.deleteStreamById = {
     'spec': {
         "description": "Operations about streams",
-        "path": "/api/streams/{streamId}",
+        "path": "/streams/{streamId}",
         "notes": "Returns a stream based on ID",
         "summary": "Delete stream by ID",
         "method": "DELETE",

@@ -1,3 +1,7 @@
+// models.js
+// Multimedia Engeneering II - Übung 4
+// Nils Kienöl (797863)
+
 exports.models = {
     "Stream": {
         "id": "Stream",

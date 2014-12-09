@@ -1,4 +1,6 @@
 // server.js
+// Multimedia Engeneering II - Übung 4
+// Nils Kienöl (797863)
 
 // HELPERS
 var time = function () {
@@ -42,7 +44,7 @@ var jsonToFile = function (inputJson, outputFilename) {
 
 // REST API
 // -    -   -   -   -   -   -   -   -   -
-// description
+// Describe a REST API with Express
 
 // setup
 var fs = require('fs');
@@ -166,21 +168,28 @@ router.route('/streams/:stream_id')
     // put -> stream by id
     .put(function (req, res) {
 
-        var searchID = req.param('stream_id');
-        var error = true;
-        streamsData.forEach(function (streamData) {
-            if (streamData.id == searchID) {
-                console.log("CHANGE  Name from (", streamData.name, ") to (", req.body.name, ")");
-                error = false;
-                streamData.name = req.body.name;
-                console.log('RESPONSE', ' at ', time(), ' from ', 'server', ' to ', req.ip);
-                res.json(streamData);
-            }
-        });
-        if (error) {
-            console.error("ERROR  No Stream found for this id " + searchID + ".");
+        if (!req.body.hasOwnProperty('name')) {
+            console.error("ERROR  Wrong Stream PUT!");
             res.status(404).json(error_404);
         }
+        else {
+            var searchID = req.param('stream_id');
+            var error = true;
+            streamsData.forEach(function (streamData) {
+                if (streamData.id == searchID) {
+                    console.log("CHANGE  Name from (", streamData.name, ") to (", req.body.name, ")");
+                    error = false;
+                    streamData.name = req.body.name;
+                    console.log('RESPONSE', ' at ', time(), ' from ', 'server', ' to ', req.ip);
+                    res.json(streamData);
+                }
+            });
+            if (error) {
+                console.error("ERROR  No Stream found for this id " + searchID + ".");
+                res.status(404).json(error_404);
+            }
+        }
+
 
     })
 
@@ -192,7 +201,7 @@ router.route('/streams/:stream_id')
         var oldStreamsDataLength = streamsData.length;
         streamsData.forEach(function (streamData) {
             if (streamData.id == searchID) {
-                console.log("DELTE  Stream with ID", searchID);
+                console.log("DELETE  Stream with ID", searchID);
                 error = false;
                 streamsData = streamsData.filter(function (item) {
                     return (item.id != streamData.id)
@@ -212,7 +221,7 @@ router.route('/streams/:stream_id')
 // REGISTER ROUTES
 // register redirect for '/'
 //app.use('/', routerRedirect);
-app.use('/api', router);
+app.use('/api/v1', router);
 
 // DOCUMENTATION
 // -    -   -   -   -   -   -   -   -   -
@@ -265,6 +274,20 @@ swagger.addGet(streamResources.readStreamById);
 swagger.addPut(streamResources.updateStreamById);
 swagger.addDelete(streamResources.deleteStreamById);
 
+// set api info
+swagger.setApiInfo({
+    title: "REST API Docs for MME2 - Abgabe 4",
+    description: "Streamstore by <strong>Nils Kienöl</strong> (797863)",
+    contact: "s51067@beuth-hochschule.de",
+    license: "MIT",
+    licenseUrl: "http://opensource.org/licenses/MIT"
+});
+
+swagger.configureDeclaration("Streams", {
+    description : "Operations about Streams",
+    produces: ["application/json"]
+});
+
 
 swagger.configureSwaggerPaths("", "api-docs", "");
 swagger.setHeaders = function setHeaders(res) {
@@ -273,8 +296,8 @@ swagger.setHeaders = function setHeaders(res) {
 };
 swagger.configure('', require('./package.json').version);
 port = 8002;
-//swagger.configure("http://" + external_ip +":"+ port, "0.1");
-swagger.configure("http://localhost:"+ port+"", "0.1");
+swagger.configure("http://localhost:" + port + "/api/v1", "0.1");
+
 // START SERVER
 // -    -   -   -   -   -   -   -   -   -
 //port = 8002;
